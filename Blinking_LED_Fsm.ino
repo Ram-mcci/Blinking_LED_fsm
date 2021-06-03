@@ -110,14 +110,17 @@ private:
 				digitalWrite(13, HIGH);
 				delay(1000);	
 				}
+			newState = State::stLedOff;	
 			break;
 
 		case State::stLedOff:
 			if (fEntry)
 				{
 				digitalWrite(13, LOW);
-								delay(1000);
+				delay(1000);
 				}
+			newState = State::stFinal;
+			break;
 
 		case State::stFinal:
 			// This is called just once; we just clear the
