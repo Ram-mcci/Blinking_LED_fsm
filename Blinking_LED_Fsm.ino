@@ -34,8 +34,8 @@ public:
 	// constructor
 	led(Catena &myCatena, StatusLed &lockLed)
 		: m_Catena(myCatena),
-		 m_Led(lockLed)
-		{}
+		  m_Led(lockLed)
+		 {}
 
 	// states for FSM
 	enum class State
@@ -61,7 +61,7 @@ public:
 		{
 		if (this->checkRunning())
 			{
-			this->m_evShutdown = true;
+			/*this->m_evShutdown = true;*/
 			while (this->m_fRunning)
 				this->m_fsm.eval();
 			}
@@ -93,7 +93,6 @@ private:
 
 		switch (currentState)
 			{
-
 		case State::stInitial:
 			if (fEntry)
 				{
@@ -144,7 +143,14 @@ private:
 
 		return newState;
 		}
-	}
+
+	// the Catena reference
+	Catena &m_Catena;
+	StatusLed &m_Led;
+
+	// state flag: true iff the FSM is running.
+	bool m_fRunning: 1;
+	};
 
 /****************************************************************************\
 |
@@ -160,6 +166,7 @@ StatusLed gLed (Catena::PIN_STATUS_LED);
 
 // instantiate the led
 led gled (gCatena, gLed);
+
 
 /*
 || The next few lines give the datastructures needed for extending
@@ -186,22 +193,7 @@ void setup()
 	while (! Serial)
 	/* wait */;
 
-	/* add our application-specific commands */
-	gCatena.addCommands(
-		/* name of app dispatch table, passed by reference */
-		sMyExtraCommands_top,
-		/*
-		|| optionally a context pointer using static_cast<void *>().
-		|| normally only libraries (needing to be reentrant) need
-		|| to use the context pointer.
-		*/
-		nullptr
-		);
-
-
 	gCatena.SafePrintf("This is the FSM demo program for the MCCI Catena-Arduino-Platform library.\n");
-	gCatena.SafePrintf("Enter 'help' for a list of commands.\n");
-	gCatena.SafePrintf("(remember to select 'Line Ending: Newline' at the bottom of the monitor window.)\n");
 
 	gLed.begin();
 	gCatena.registerObject(&gLed);
